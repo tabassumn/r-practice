@@ -3,8 +3,12 @@ title: "Creating graphs in R with `ggplot2`"
 author: "N Tabassum"
 date: "`r Sys.Date()`"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
-
+# notes for github
+when saved, only then the files appear on git
+# plot practice
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
@@ -87,6 +91,49 @@ panel.background = element_blank(), axis.line = element_line(colour = "black"))
 ```
 
 ##Updating axis labels and titles
+```{r axes}
+gg1 +
+  geom_line(color = 'violet') +
+  #theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) +
+  labs(
+    x = 'Year',
+    y = "Annual park visitors"
+  )
+
+```
+
+# Multi-series ggplot graphs 
+
+```{r multiseries}
+ca_np <- read_csv(here("data","ca_np.csv"))
+gg2 <- ggplot(data = ca_np, aes(x = year, y = visitors, group = park_name))
+gg2 + 
+  geom_line()
+
+
+```
+
+# Faceting ggplot graphs (subplots)
+
+```{r subplots}
+gg2 +
+  geom_line(show.legend = FALSE) +
+    theme_light() + 
+  labs(x = "year", y = "annual visitors") +
+  facet_wrap(~ park_name)
+
+```
+
+# Exporting a ggplot graph with ggsave()
+ggsave() will export the most recently run ggplot graph by default (plot = last_plot()), unless you give it the name of a different saved ggplot object.
+
+```{r exporting}
+
+ggsave(here("figures", "np_graph.jpg"), dpi = 180, width = 8, height = 7)
+# Notice that a .jpg image of that name and size is now stored in the figures\ folder within your working directory. You can change the type of exported image, too (e.g. pdf, tiff, eps, png, mmp, svg).
+```
+
+
 
 
 
