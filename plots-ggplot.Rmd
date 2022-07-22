@@ -7,24 +7,87 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(readxl)
+library(here)
 ```
 
-## R Markdown
+# Code for reading and plotting graphs
+```{r}
+ci_np <- read_excel(here("data","ci_np.xlsx"))
+## First, tell R you’re using ggplot()
+##Then, tell it the object name where variables exist (data = df_name)
+##Next, tell it the aesthetics aes() to specify which variables you want to plot
+##Then add a layer for the type of geom (graph type) with geom_*() - for example, geom_point() is a scatterplot, geom_line() is a line graph, geom_col() is a column graph, etc.
+#let the first graph be an object
+gg1 <- ggplot(data = ci_np, aes(x = year, y = visitors))
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+# now plotting different variations of gg1
+##gg1 +
+  ##geom_line()
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+# changing gg1 aesthetics
+gg1 +
+  geom_line(
+    color = "brown",
+    linetype = "dotted", ##changing line type
+  )
+```
+Changing markers
+```{r marker_plots}
+gg1 + 
+  geom_point(
+    color = "cyan", #colors-go to Rcolors(https://r-graph-gallery.com/ggplot2-color.html)
+             pch = 17, #characters-type?pch for guide
+             size = 4,
+             alpha = 1 #color channel
+    )
 
-```{r cars}
-summary(cars)
 ```
 
-## Including Plots
+## Mapping variables onto aesthetics
+When we want to customize a graph element based on a variable’s characteristic or value, add the argument within aes() in the appropriate geom_*() layer
 
-You can also embed plots, for example:
+Example: Create a ggplot scatterplot graph where the size and color of the points change based on the number of visitors, and make all points the same level of opacity (alpha = 0.5). Notice the aes() around the size = and color = arguments.
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r gg1_aes}
+gg1 +
+  geom_point(
+    aes(color = visitors,
+        size = visitors),
+    alpha = 1
+  )
+
+```
+Create a column plot of Channel Islands National Park visitation over time, where the fill color (argument: fill =) changes based on the number of visitors.
+
+```{r geom_col_mapping to fill}
+gg1 + 
+  geom_col(aes(fill = visitors))
+```
+ggplot2 complete themes: While every element of a ggplot graph is manually customizable, there are also built-in themes (theme_*()) that you can add to your ggplot code to make some major headway before making smaller tweaks manually
+
+```{r changing themes}
+gg1 +
+  geom_point(
+    aes(size = visitors,
+        color = visitors),
+    alpha = 0.5
+  ) +
+  theme_minimal()
+#removing grid lines, background and plot backgrounds
+gg1 +
+  geom_point(
+    aes(size = visitors,
+        color = visitors),
+    alpha = 0.5
+  ) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+panel.background = element_blank(), axis.line = element_line(colour = "black"))
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+##Updating axis labels and titles
+
+
+
+
